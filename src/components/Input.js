@@ -1,13 +1,13 @@
 import React from 'react'
 
-export default function Input({ items, setItems }) {
+export default function Input({ items, setItems, filtered, setFiltered }) {
 
   const [input, setInput] = React.useState('')
   const [newItemId, setNewItemId] = React.useState(1)
 
   const addTask = (e) => {
     e.preventDefault()
-    if(input) {
+    if(input.trim()) {
       const newItem = {
         id: newItemId,
         text: input,
@@ -23,12 +23,23 @@ export default function Input({ items, setItems }) {
     setInput(e.target.value)
   }
 
+  const handleSwitch = (e) => {
+    if(e.target.value === "All") {
+      setFiltered(items)
+    } else if (e.target.value === "Active") {
+      setFiltered(items.filter((item) => item.isDone === false))
+    } else if (e.target.value === "Done") {
+      setFiltered(items.filter((item) => item.isDone === true))
+    }
+  }
+
     return (
     <section className='input__section flex justify-center py-2 mt-[50px] mb-[70px]'>
       <form onSubmit={addTask} style={{display:"flex", justifyContent:"center"}}>
         <input
           value={input}
           onChange={handleChange}
+          placeholder="Enter new task"
           className='input__input border text-center border-gray-200 h-[45px] w-[300px]'
           type={"text"}>
         </input>
@@ -40,9 +51,10 @@ export default function Input({ items, setItems }) {
         </button>
       </form>
       
-      <select className='ml-10 text-center' type={"select"}>
+      <select onChange={handleSwitch} className='ml-10 text-center' type={"select"}>
         <option>All</option>
         <option>Active</option>
+        <option>Done</option>
       </select>
     </section>
   )
